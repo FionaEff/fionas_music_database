@@ -8,11 +8,22 @@
     <title>{{ title }} - Fiona's Music Database</title>
     {% else %}
     <title>Fiona's Music Database</title>
+    {% endif %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 
 </head>
 
 <body>
+    <div class="navbar">
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li><a href="{{ url_for('main.artists') }}">Artists</a></li>
+                <li><a href="{{ url_for('main.albums') }}">Albums</a></li>
+                <li><a href="{{ url_for('main.add_album') }}">Add Album</a></li>
+            </ul>
+        </nav>
+    </div>
 
 </body>
 
