@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="albums-list">
+    <table class="albums-list-table">
+        {% for album in albums %}
+        <tr>
+            <td>{{ album.year }}</td>
+            <td>{{ album.title }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="artists-list">
+    <table class="artists-list-table">
+        {% for artist in artists %}
+        <tr>
+            <td>{{ artist.name }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
