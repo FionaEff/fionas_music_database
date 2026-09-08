@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="artist-details">
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Founded</th>
+            <th>Notes</th>
+        </tr>
+        <tr>
+            <td>{{ artist.name }}</td>
+            <td>{{ artist.country }}</td>
+            <td>{{ artist.year_of_founding }}</td>
+            <td>{{ artist.notes }}</td>
+        </tr>
+    </table>
+
+    <a href="{{ url_for('main.edit_artist', artist_id=artist.id) }}">Edit Artist</a>
+
+    <h2>Albums</h2>
+    <table>
+        <tr>
+            <th>Year</th>
+            <th>Title</th>
+        </tr>
+        <tr>
+            {% for album in albums %}
+            <td>{{ album.year }}</td>
+            <td>{{ album.title }}</td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+
+{% endblock %}

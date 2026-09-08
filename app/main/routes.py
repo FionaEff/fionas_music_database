@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
-from app.main.forms import AddAlbumForm
+from app.main.forms import AddAlbumForm, EditArtistForm
 from app.models import Artist, Album, Track, Genre
 
 
@@ -23,9 +23,54 @@ def albums():
 @bp.route("/artists", methods=["GET"])
 def artists():
 
-    artists = db.session.scalars(sa.select(Artist).order_by(Artist.id.desc())).all()
+    artists = db.session.scalars(sa.select(Artist).order_by(Artist.name)).all()
 
     return render_template("artists.html", title="Artists", artists=artists)
+
+
+@bp.route("/artist_details/<int:artist_id>", methods=["GET"])
+def artist_details(artist_id):
+
+    artist = db.session.scalar(sa.Select(Artist).where(Artist.id == artist_id))
+    albums = db.session.scalars(
+        sa.Select(Album).where(Album.artist_id == artist_id).order_by(Album.year)
+    ).all()
+
+    if not artist:
+        flash("Artist not found.")
+        return redirect(url_for("main.artists"))
+
+    return render_template(
+        "artist_details.html", title=artist.name, artist=artist, albums=albums
+    )
+
+
+@bp.route("/edit_artist/<int:artist_id>/", methods=["GET", "POST"])
+def edit_artist(artist_id):
+
+    artist = db.session.scalar(sa.Select(Artist).where(Artist.id == artist_id))
+
+    if not artist:
+        flash("Artist not found.")
+        return redirect(url_for("main.artists"))
+
+    form = EditArtistForm(obj=artist)
+
+    if form.validate_on_submit():
+        artist.name = form.name.data
+        artist.country = form.country.data
+        artist.year_of_founding = form.year_of_founding.data
+        artist.notes = form.notes.data
+
+        db.session.commit()
+
+        flash("Artist updated.")
+
+        return redirect(url_for("main.artist_details", artist_id=artist.id))
+
+    return render_template(
+        "edit_artist.html", title=f"Edit {artist.name}", form=form, artist=artist
+    )
 
 
 @bp.route("/add_album", methods=["GET", "POST"])
