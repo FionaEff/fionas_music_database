@@ -24,7 +24,7 @@ class Artist(db.Model):
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     name: so.Mapped[str] = so.mapped_column(sa.String(128), index=True, unique=True)
-    country: so.Mapped[str] = so.mapped_column(sa.String(64))
+    country: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
     year_of_founding: so.Mapped[Optional[int]] = so.mapped_column(
         sa.SmallInteger, index=True
     )
@@ -43,9 +43,9 @@ class Album(db.Model):
     format: so.Mapped[AlbumFormat] = so.mapped_column(
         sa.Enum(AlbumFormat, name="album_format")
     )
-    label: so.Mapped[str] = so.mapped_column(sa.String(64))
-    cover_path: so.Mapped[str] = so.mapped_column(sa.String(128))
-    notes: so.Mapped[str] = so.mapped_column(sa.String(256))
+    label: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    cover_path: so.Mapped[Optional[str]] = so.mapped_column(sa.String(128))
+    notes: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
 
     artist_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Artist.id), index=True)
 

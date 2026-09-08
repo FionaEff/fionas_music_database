@@ -2,6 +2,7 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
+from app.main.forms import AddAlbumForm
 from app.models import Artist, Album, Track, Genre
 
 
@@ -14,7 +15,7 @@ def index():
 @bp.route("/albums", methods=["GET"])
 def albums():
 
-    albums = db.session.scalars(sa.select(Album)).all()
+    albums = db.session.scalars(sa.select(Album).order_by(Album.id.desc())).all()
 
     return render_template("albums.html", title="Albums", albums=albums)
 
@@ -22,11 +23,72 @@ def albums():
 @bp.route("/artists", methods=["GET"])
 def artists():
 
-    artists = db.session.scalars(sa.select(Artist)).all()
+    artists = db.session.scalars(sa.select(Artist).order_by(Artist.id.desc())).all()
 
     return render_template("artists.html", title="Artists", artists=artists)
 
 
 @bp.route("/add_album", methods=["GET", "POST"])
 def add_album():
-    return render_template("add_album.html", title="Add Album")
+
+    form = AddAlbumForm()
+
+    artists = db.session.scalars(sa.select(Artist).order_by(Artist.name)).all()
+    genres = db.session.scalars(sa.select(Genre).order_by(Genre.name)).all()
+
+    form.existing_artist.choices = [(0, "Select Artist")] + [
+        (artist.id, artist.name) for artist in artists
+    ]
+    form.existing_genre.choices = [(0, "Select Genre")] + [
+        (genre.id, genre.name) for genre in genres
+    ]
+
+    if form.validate_on_submit():
+
+        if form.new_artist.data and form.existing_artist.data == 0:
+            artist = Artist(name=form.new_artist.data)
+            db.session.add(artist)
+            db.session.flush()
+
+        elif form.existing_artist.data != 0 and not form.new_artist.data:
+            artist = db.session.get(Artist, form.new_artist.data)
+
+        else:
+            flash(
+                "You can either enter a new artist or select one from the list of existing artists."
+            )
+
+        if form.new_genre.data and form.existing_genre.data == 0:
+            genre = Genre(name=form.new_genre.data)
+            db.session.add(genre)
+            db.session.flush()
+
+        elif form.existing_genre.data != 0 and not form.existing_genre.data:
+            genre = db.session.get(Genre, form.existing_genre.data)
+
+        else:
+            flash(
+                "You can either enter a new genre or select one from the list of existing genres."
+            )
+
+        new_album = Album(
+            title=form.album_name.data,
+            artist=artist,
+            year=form.year.data,
+            label=form.label.data,
+            format=form.format.data,
+            discogs_id=form.discogs_id.data,
+            notes=form.notes.data,
+        )
+
+        if genre:
+            new_album.genres.append(genre)
+
+        db.session.add(new_album)
+        db.session.commit()
+
+        flash("The album has been added to the database.")
+
+        return redirect(url_for("main.albums"))
+
+    return render_template("add_album.html", title="Add Album", form=form)
