@@ -33,3 +33,17 @@ class EditArtistForm(FlaskForm):
     year_of_founding = IntegerField("Founded (Optional)", validators=[Optional()])
     notes = StringField("Notes (Optionla)", validators=[Length(max=256)])
     submit = SubmitField("Save Changes")
+
+
+class EditAlbumForm(FlaskForm):
+
+    title = StringField("Album Name", validators=[DataRequired(), Length(max=64)])
+    year = IntegerField("Year (Optional)", validators=[Optional()])
+    format = SelectField(
+        "Album Format",
+        choices=[("vinyl", "Vinyl"), ("cd", "CD"), ("digital", "Digital")],
+        validators=[DataRequired()],
+    )
+    label = StringField("Label (Optional)", validators=[Length(max=64)])
+    notes = StringField("Notes (Optional)", validators=[Length(max=256)])
+    submit = SubmitField("Save Changes")

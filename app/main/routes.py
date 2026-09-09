@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
-from app.main.forms import AddAlbumForm, EditArtistForm
+from app.main.forms import AddAlbumForm, EditArtistForm, EditAlbumForm
 from app.models import Artist, Album, Track, Genre
 
 
@@ -10,14 +10,6 @@ from app.models import Artist, Album, Track, Genre
 @bp.route("/index", methods=["GET"])
 def index():
     return render_template("index.html", title="Home")
-
-
-@bp.route("/albums", methods=["GET"])
-def albums():
-
-    albums = db.session.scalars(sa.select(Album).order_by(Album.id.desc())).all()
-
-    return render_template("albums.html", title="Albums", albums=albums)
 
 
 @bp.route("/artists", methods=["GET"])
@@ -45,7 +37,7 @@ def artist_details(artist_id):
     )
 
 
-@bp.route("/edit_artist/<int:artist_id>/", methods=["GET", "POST"])
+@bp.route("/edit_artist/<int:artist_id>", methods=["GET", "POST"])
 def edit_artist(artist_id):
 
     artist = db.session.scalar(sa.Select(Artist).where(Artist.id == artist_id))
@@ -71,6 +63,14 @@ def edit_artist(artist_id):
     return render_template(
         "edit_artist.html", title=f"Edit {artist.name}", form=form, artist=artist
     )
+
+
+@bp.route("/albums", methods=["GET"])
+def albums():
+
+    albums = db.session.scalars(sa.select(Album).order_by(Album.id.desc())).all()
+
+    return render_template("albums.html", title="Albums", albums=albums)
 
 
 @bp.route("/add_album", methods=["GET", "POST"])
@@ -137,3 +137,42 @@ def add_album():
         return redirect(url_for("main.albums"))
 
     return render_template("add_album.html", title="Add Album", form=form)
+
+
+@bp.route("/album_details/<int:album_id>", methods=["GET"])
+def album_details(album_id):
+
+    album = db.session.scalar(sa.Select(Album).where(Album.id == album_id))
+
+    if not album:
+        flash("Album not found.")
+        return redirect(url_for("main.albums"))
+
+    return render_template("album_details.html", title=album.title, album=album)
+
+
+@bp.route("/edit_album/<int:album_id>", methods=["GET", "POST"])
+def edit_album(album_id):
+
+    album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
+
+    if not album:
+        flash("Album not found.")
+        return redirect(url_for("main.albums"))
+
+    form = EditAlbumForm(obj=album)
+
+    if form.validate_on_submit():
+        album.title = form.title.data
+        album.year = form.year.data
+        album.format = form.format.data
+        album.label = form.label.data
+        album.notes = form.notes.data
+
+        db.session.commit()
+
+        flash("Album updated.")
+
+        return redirect(url_for("main.album_details", album_id=album.id))
+
+    return render_template("edit_album.html", title=album.title, form=form, album=album)

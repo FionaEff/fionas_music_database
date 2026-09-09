@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="album-details">
+    <h1>{{ album.title }}</h1>
+    <table>
+        <tr>
+            <th>Artist</th>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+        <tr>
+            <td>{{ album.artist.name }}</td>
+            <td>{{ album.title }}</td>
+            <td>{{ album.year }}</td>
+        </tr>
+    </table>
+    <a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a>
+</div>
+{% endblock %}
