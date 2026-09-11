@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="track-list">
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Duration</th>
+        </tr>
+        {% for track in tracks %}
+        <tr>
+            <td>{{ track.track_number }}</td>
+            <td>{{ track.title }}</td>
+            <td>
+                {% if track.duration_seconds %}
+                {{ track.duration_seconds // 60 }}:{{ "%2d"|format(track.duration_seconds % 60) }}
+                {% else %} - 
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="add-tracks">
+    <h2>Add Track</h2>
+
+    <form class="add-tracks-form" action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.title.label }}
+            {{ form.title }}
+            {% for error in form.title.errors %}
+            <span style="color: red;"">[{{ error }}]</span>
+            {% endfor %}
+            <br><br>
+            {{ form.track_number.label }}
+            {{ form.track_number }}
+            {% for error in form.track_number.errors %}
+            <span style=" color: red;"">[{{ error }}]</span>
+            {% endfor %}
+            <br><br>
+            {{ form.duration_seconds.label }}
+            {{ form.duration_seconds }}
+            {% for error in form.duration_seconds.errors %}
+            <span style="color: red;"">[{{ error }}]</span>
+            {% endfor %}
+            <br><br>
+        </p>
+        <p>
+            {{ form.submit() }}
+        </p>
+    </form>
+</div>
+{% endblock %}

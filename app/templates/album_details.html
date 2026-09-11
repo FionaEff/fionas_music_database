@@ -14,6 +14,30 @@
             <td>{{ album.year }}</td>
         </tr>
     </table>
+
+    <div class="track-list">
+        <table>
+            <tr>
+                <th>Number</th>
+                <th>Title</th>
+                <th>Duration</th>
+            </tr>
+            {% for track in tracks %}
+            <tr>
+                <td>{{ track.track_number }}</td>
+                <td>{{ track.title }}</td>
+                <td>
+                    {% if track.duration_seconds %}
+                    {{ track.duration_seconds // 60 }}:{{ "%2d"|format(track.duration_seconds % 60) }}
+                    {% else %} - 
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
     <a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a>
+    <a href="{{ url_for('main.edit_tracks', album_id=album.id) }}">Edit Tracks</a>
 </div>
 {% endblock %}

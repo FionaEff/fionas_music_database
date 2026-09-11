@@ -2,7 +2,7 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
-from app.main.forms import AddAlbumForm, EditArtistForm, EditAlbumForm
+from app.main.forms import AddAlbumForm, EditArtistForm, EditAlbumForm, EditTrackForm
 from app.models import Artist, Album, Track, Genre
 
 
@@ -143,12 +143,13 @@ def add_album():
 def album_details(album_id):
 
     album = db.session.scalar(sa.Select(Album).where(Album.id == album_id))
+    tracks = db.session.scalars(sa.select(Track).where(Track.album_id==album_id))
 
     if not album:
         flash("Album not found.")
         return redirect(url_for("main.albums"))
 
-    return render_template("album_details.html", title=album.title, album=album)
+    return render_template("album_details.html", title=album.title, tracks=tracks, album=album)
 
 
 @bp.route("/edit_album/<int:album_id>", methods=["GET", "POST"])
@@ -176,3 +177,35 @@ def edit_album(album_id):
         return redirect(url_for("main.album_details", album_id=album.id))
 
     return render_template("edit_album.html", title=album.title, form=form, album=album)
+
+
+@bp.route("/edit_tracks/<int:album_id>", methods=["GET", "POST"])
+def edit_tracks(album_id):
+
+    album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
+    tracks = db.session.scalars(sa.select(Track).where(Track.album_id == album_id))
+
+    form = EditTrackForm()
+
+    if form.validate_on_submit():
+        new_track = Track(
+            title=form.title.data,
+            track_number=form.track_number.data,
+            duration_seconds=form.duration_seconds.data,
+            album_id=album_id,
+        )
+
+        db.session.add(new_track)
+        db.session.commit()
+
+        flash("New track added to album.")
+
+        return redirect(url_for("main.edit_tracks", album_id=album.id))
+
+    return render_template(
+        "edit_tracks.html",
+        title=f"{album.title} - Edit Tracks",
+        album=album,
+        tracks=tracks,
+        form=form,
+    )

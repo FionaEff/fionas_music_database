@@ -28,7 +28,7 @@
         <tr>
             {% for album in albums %}
             <td>{{ album.year }}</td>
-            <td>{{ album.title }}</td>
+            <td><a href="{{ url_for('main.album_details', album_id=album.id) }}">{{ album.title }}</a></td>
             {% endfor %}
         </tr>
     </table>

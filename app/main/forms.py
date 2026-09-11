@@ -47,3 +47,13 @@ class EditAlbumForm(FlaskForm):
     label = StringField("Label (Optional)", validators=[Length(max=64)])
     notes = StringField("Notes (Optional)", validators=[Length(max=256)])
     submit = SubmitField("Save Changes")
+
+
+class EditTrackForm(FlaskForm):
+
+    title = StringField("Title", validators=[DataRequired(), Length(max=128)])
+    track_number = IntegerField("Track Number", validators=[DataRequired()])
+    duration_seconds = IntegerField(
+        "Duration in Seconds (Optional)", validators=[Optional()]
+    )
+    submit = SubmitField("Save Changes")
