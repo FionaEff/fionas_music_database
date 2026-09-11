@@ -29,7 +29,7 @@
                 <td>
                     {% if track.duration_seconds %}
                     {{ track.duration_seconds // 60 }}:{{ "%2d"|format(track.duration_seconds % 60) }}
-                    {% else %} - 
+                    {% else %} -
                     {% endif %}
                 </td>
             </tr>
@@ -38,6 +38,6 @@
     </div>
 
     <button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button>
-    <button type="button"><a href="{{ url_for('main.edit_tracks', album_id=album.id) }}">Edit Tracks</a></button>
+    <button type="button"><a href="{{ url_for('main.add_tracks', album_id=album.id) }}">Edit Tracks</a></button>
 </div>
 {% endblock %}

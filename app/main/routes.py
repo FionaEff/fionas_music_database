@@ -143,13 +143,15 @@ def add_album():
 def album_details(album_id):
 
     album = db.session.scalar(sa.Select(Album).where(Album.id == album_id))
-    tracks = db.session.scalars(sa.select(Track).where(Track.album_id==album_id))
+    tracks = db.session.scalars(sa.select(Track).where(Track.album_id == album_id))
 
     if not album:
         flash("Album not found.")
         return redirect(url_for("main.albums"))
 
-    return render_template("album_details.html", title=album.title, tracks=tracks, album=album)
+    return render_template(
+        "album_details.html", title=album.title, tracks=tracks, album=album
+    )
 
 
 @bp.route("/edit_album/<int:album_id>", methods=["GET", "POST"])
@@ -179,8 +181,8 @@ def edit_album(album_id):
     return render_template("edit_album.html", title=album.title, form=form, album=album)
 
 
-@bp.route("/edit_tracks/<int:album_id>", methods=["GET", "POST"])
-def edit_tracks(album_id):
+@bp.route("/add_tracks/<int:album_id>", methods=["GET", "POST"])
+def add_tracks(album_id):
 
     album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
     tracks = db.session.scalars(sa.select(Track).where(Track.album_id == album_id))
@@ -200,12 +202,33 @@ def edit_tracks(album_id):
 
         flash("New track added to album.")
 
-        return redirect(url_for("main.edit_tracks", album_id=album.id))
+        return redirect(url_for("main.add_tracks", album_id=album.id))
 
     return render_template(
-        "edit_tracks.html",
-        title=f"{album.title} - Edit Tracks",
+        "add_tracks.html",
+        title=f"{album.title} - Add Tracks",
         album=album,
         tracks=tracks,
         form=form,
     )
+
+
+@bp.route("/edit_tracks/<int:track_id>", methods=["GET", "POST"])
+def edit_track(track_id):
+
+    track = db.session.scalar(sa.select(Track).where(Track.id == track_id))
+
+    form = EditTrackForm(obj=track)
+
+    if form.validate_on_submit():
+        track.title = form.title.data
+        track.track_number = form.track_number.data
+        track.duration_seconds = form.duration_seconds.data
+
+        db.session.commit()
+
+        flash("Tracks updated.")
+
+        return redirect(url_for("main.album_details", album_id=track.album_id))
+
+    return render_template("edit_track.html", title="Edit Tracks", form=form, track=track)

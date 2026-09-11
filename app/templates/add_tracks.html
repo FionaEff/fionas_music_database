@@ -6,6 +6,7 @@
             <th>Number</th>
             <th>Title</th>
             <th>Duration</th>
+            <th>Action</th>
         </tr>
         {% for track in tracks %}
         <tr>
@@ -16,6 +17,9 @@
                 {{ track.duration_seconds // 60 }}:{{ "%2d"|format(track.duration_seconds % 60) }}
                 {% else %} - 
                 {% endif %}
+            </td>
+            <td>
+                <button type="button"><a href="{{ url_for('main.edit_track', track_id=track.id) }}">Edit Track</a></button>
             </td>
         </tr>
         {% endfor %}
