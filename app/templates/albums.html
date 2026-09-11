@@ -8,7 +8,9 @@
             <td>{{ album.artist.name }}</td>
             <td>{{ album.year }}</td>
             <td>{{ album.title }}</td>
-            <td><a href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></td>
+            <td>
+                <button type="button"><a href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button>
+            </td>
         </tr>
         {% endfor %}
     </table>

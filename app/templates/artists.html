@@ -6,7 +6,9 @@
         {% for artist in artists %}
         <tr>
             <td>{{ artist.name }}</td>
-            <td><a href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></td>
+            <td>
+                <button type="button"><a href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></button>
+            </td>
         </tr>
         {% endfor %}
     </table>
