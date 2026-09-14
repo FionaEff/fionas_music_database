@@ -7,11 +7,19 @@
         <tr>
             <td>{{ artist.name }}</td>
             <td>
-                <button type="button"><a href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></button>
+                <button type="button"><a
+                        href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></button>
+            </td>
+            <td>
+                <button type="button"><a
+                        href="{{ url_for('main.delete_artist', artist_id=artist.id) }}">Delete</a></button>
             </td>
         </tr>
         {% endfor %}
     </table>
+    <p>
+        <button type="button"><a href="{{ url_for('main.add_artist') }}">Add Artist</a></button>
+    </p>
 </div>
 
 {% endblock %}

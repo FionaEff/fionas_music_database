@@ -21,6 +21,9 @@
             <td>
                 <button type="button"><a href="{{ url_for('main.edit_track', track_id=track.id) }}">Edit Track</a></button>
             </td>
+            <td>
+                <button type="button"><a href="{{ url_for('main.delete_track', track_id=track.id) }}">Delete Track</a></button>
+            </td>
         </tr>
         {% endfor %}
     </table>

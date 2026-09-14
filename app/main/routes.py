@@ -2,7 +2,13 @@ import sqlalchemy as sa
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
-from app.main.forms import AddAlbumForm, EditArtistForm, EditAlbumForm, EditTrackForm
+from app.main.forms import (
+    AddAlbumForm,
+    EditArtistForm,
+    EditAlbumForm,
+    EditTrackForm,
+    AddArtistForm,
+)
 from app.models import Artist, Album, Track, Genre
 
 
@@ -63,6 +69,50 @@ def edit_artist(artist_id):
     return render_template(
         "edit_artist.html", title=f"Edit {artist.name}", form=form, artist=artist
     )
+
+
+@bp.route("/add_artist", methods=["Get", "POST"])
+def add_artist():
+
+    form = AddArtistForm()
+
+    if form.validate_on_submit():
+        new_artist = Artist(
+            name=form.name.data,
+            country=form.country.data,
+            year_of_founding=form.year_of_founding.data,
+            notes=form.notes.data,
+        )
+
+        db.session.add(new_artist)
+        db.session.commit()
+
+        flash("The artist has been added.")
+
+        return redirect(url_for("main.artists"))
+
+    return render_template("add_artist.html", title="Add Artist", form=form)
+
+
+@bp.route("/artists/<int:artist_id>/delete", methods=["GET", "POST"])
+def delete_artist(artist_id):
+
+    artist = db.session.scalar(sa.select(Artist).where(Artist.id == artist_id))
+
+    if not artist:
+        flash("Artist not found.")
+        return redirect(url_for("main.artists"))
+
+    if artist.albums:
+        flash("Cannot delete an artist with existing albums.")
+        return redirect(url_for("main.albums"))
+
+    db.session.delete(artist)
+    db.session.commit()
+
+    flash("Artist deleted.")
+
+    return redirect(url_for("main.artists"))
 
 
 @bp.route("/albums", methods=["GET"])
@@ -132,7 +182,7 @@ def add_album():
         db.session.add(new_album)
         db.session.commit()
 
-        flash("The album has been added to the database.")
+        flash("The album has been added.")
 
         return redirect(url_for("main.albums"))
 
@@ -181,8 +231,8 @@ def edit_album(album_id):
     return render_template("edit_album.html", title=album.title, form=form, album=album)
 
 
-@bp.route("/add_tracks/<int:album_id>", methods=["GET", "POST"])
-def add_tracks(album_id):
+@bp.route("/tracks/<int:album_id>", methods=["GET", "POST"])
+def tracks(album_id):
 
     album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
     tracks = db.session.scalars(sa.select(Track).where(Track.album_id == album_id))
@@ -202,10 +252,10 @@ def add_tracks(album_id):
 
         flash("New track added to album.")
 
-        return redirect(url_for("main.add_tracks", album_id=album.id))
+        return redirect(url_for("main.tracks", album_id=album.id))
 
     return render_template(
-        "add_tracks.html",
+        "tracks.html",
         title=f"{album.title} - Add Tracks",
         album=album,
         tracks=tracks,
@@ -213,7 +263,7 @@ def add_tracks(album_id):
     )
 
 
-@bp.route("/edit_tracks/<int:track_id>", methods=["GET", "POST"])
+@bp.route("/edit_track/<int:track_id>", methods=["GET", "POST"])
 def edit_track(track_id):
 
     track = db.session.scalar(sa.select(Track).where(Track.id == track_id))
@@ -231,4 +281,23 @@ def edit_track(track_id):
 
         return redirect(url_for("main.album_details", album_id=track.album_id))
 
-    return render_template("edit_track.html", title="Edit Tracks", form=form, track=track)
+    return render_template(
+        "edit_track.html", title="Edit Tracks", form=form, track=track
+    )
+
+
+@bp.route("/tracks/<int:track_id>/delete", methods=["GET", "POST"])
+def delete_track(track_id):
+
+    track = db.session.scalar(sa.select(Track).where(Track.id == track_id))
+
+    if not track:
+        flash("Track not found.")
+        return redirect(url_for("main.tracks", album_id=track.album_id))
+
+    db.session.delete(track)
+    db.session.commit()
+
+    flash("Track deleted.")
+
+    return redirect(url_for("main.tracks", album_id=track.album_id))

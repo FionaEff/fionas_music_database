@@ -26,6 +26,15 @@ class AddAlbumForm(FlaskForm):
     submit = SubmitField("Add Album")
 
 
+class AddArtistForm(FlaskForm):
+
+    name = StringField("Artist Name", validators=[DataRequired(), Length(max=128)])
+    country = StringField("Country (Optional)", validators=[Length(max=64)])
+    year_of_founding = IntegerField("Year of Founding (Optional)", validators=[Optional()])
+    notes = StringField("Notes (Optional)", validators=[Length(max=256)])
+    submit = SubmitField("Add Artist")
+
+
 class EditArtistForm(FlaskForm):
 
     name = StringField("Artist Name", validators=[DataRequired(), Length(max=128)])
