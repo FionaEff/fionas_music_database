@@ -126,6 +126,9 @@ def albums():
 @bp.route("/add_album", methods=["GET", "POST"])
 def add_album():
 
+    artist = None
+    genre = None
+
     form = AddAlbumForm()
 
     artists = db.session.scalars(sa.select(Artist).order_by(Artist.name)).all()
@@ -146,25 +149,29 @@ def add_album():
             db.session.flush()
 
         elif form.existing_artist.data != 0 and not form.new_artist.data:
-            artist = db.session.get(Artist, form.new_artist.data)
+            artist = db.session.get(Artist, form.existing_artist.data)
 
         else:
             flash(
                 "You can either enter a new artist or select one from the list of existing artists."
             )
 
+            return render_template("add_album.html", title="Add Album", form=form)
+
         if form.new_genre.data and form.existing_genre.data == 0:
             genre = Genre(name=form.new_genre.data)
             db.session.add(genre)
             db.session.flush()
 
-        elif form.existing_genre.data != 0 and not form.existing_genre.data:
+        elif form.existing_genre.data != 0 and not form.new_genre.data:
             genre = db.session.get(Genre, form.existing_genre.data)
 
         else:
             flash(
                 "You can either enter a new genre or select one from the list of existing genres."
             )
+
+            return render_template("add_album.html", title="Add Album", form=form)
 
         new_album = Album(
             title=form.album_name.data,
@@ -229,6 +236,23 @@ def edit_album(album_id):
         return redirect(url_for("main.album_details", album_id=album.id))
 
     return render_template("edit_album.html", title=album.title, form=form, album=album)
+
+
+@bp.route("/albums/<int:album_id>/delete", methods=["GET", "POST"])
+def delete_album(album_id):
+
+    album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
+
+    if not album:
+        flash("Album not found.")
+        return redirect(url_for("main.albums"))
+
+    db.session.delete(album)
+    db.session.commit()
+
+    flash("Album deleted.")
+
+    return redirect(url_for("main.albums"))
 
 
 @bp.route("/tracks/<int:album_id>", methods=["GET", "POST"])
