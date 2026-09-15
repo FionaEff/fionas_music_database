@@ -9,10 +9,14 @@
             <td>{{ album.year }}</td>
             <td>{{ album.title }}</td>
             <td>
-                <button type="button"><a href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button>
+                <button type="button"><a
+                        href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button>
             </td>
             <td>
-                <button type="button"><a href="{{ url_for('main.delete_album', album_id=album.id) }}">Delete Album</a></button>
+                <form method="post" action="{{ url_for('main.delete_album', album_id=album.id) }}"
+                    onsubmit="return confirm('Are you sure you want to delete this album?');">
+                    <button type="submit" class="delete-button">Delete Album</button>
+                </form>
             </td>
         </tr>
         {% endfor %}
