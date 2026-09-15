@@ -190,6 +190,10 @@ def add_album():
         if form.discogs_id.data:
             release_details = api.get_release_details(str(form.discogs_id.data))
 
+            if not release_details:
+                flash("No Discogs data found.")
+                return redirect(url_for("main.add_album"))
+
             for track in release_details["tracklist"]:
                 if track["duration"]:
                     minutes = track["duration"].split(":")
@@ -253,6 +257,10 @@ def edit_album(album_id):
 
         if form.discogs_id.data:
             release_details = api.get_release_details(str(form.discogs_id.data))
+
+            if not release_details:
+                flash("No Discogs data found.")
+                return redirect(url_for("main.edit_album", album_id=album_id))
 
             album.title = release_details["title"]
             album.year = release_details["year"]
