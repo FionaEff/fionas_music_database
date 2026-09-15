@@ -2,20 +2,14 @@
 {% block content %}
 
 <div class="artist-details">
-    <table>
-        <tr>
-            <th>Name</th>
-            <th>Country</th>
-            <th>Founded</th>
-            <th>Notes</th>
-        </tr>
-        <tr>
-            <td>{{ artist.name }}</td>
-            <td>{{ artist.country }}</td>
-            <td>{{ artist.year_of_founding }}</td>
-            <td>{{ artist.notes }}</td>
-        </tr>
-    </table>
+    <h2>{{ artist.name }}</h2>
+
+    <p><b>Country: </b>{{ artist.country or "-"}}</p>
+    <p><b>Founded: </b>{{ artist.year_of_founding or "-"}}</p>
+
+    {% if artist.notes %}
+    <p><b>Notes: </b>{{ artist.notes }}</p>
+    {% endif %}
 
     <button type="button"><a href="{{ url_for('main.edit_artist', artist_id=artist.id) }}">Edit Artist</a></button>
 
@@ -24,11 +18,14 @@
         <tr>
             <th>Year</th>
             <th>Title</th>
+            <th>Format</th>
         </tr>
         <tr>
             {% for album in albums %}
             <td>{{ album.year }}</td>
-            <td><a href="{{ url_for('main.album_details', album_id=album.id) }}">{{ album.title }}</a></td>
+            <td>{{ album.title }}</td>
+            <td>{{ album.format.value.capitalize() }}</td>
+            <td><button type="button"><a href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button></td>
             {% endfor %}
         </tr>
     </table>

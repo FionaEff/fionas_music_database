@@ -29,6 +29,12 @@
             <span style=" color: red;"">[{{ error }}]</span>
             {% endfor %}
             <br><br>
+            {{ form.discogs_id.label }}
+            {{ form.discogs_id }}
+            {% for error in form.discogs_id.errors %}
+            <span style=" color: red;"">[{{ error }}]</span>
+            {% endfor %}
+            <br><br>
             {{ form.notes.label }}
             {{ form.notes }}
             {% for error in form.notes.errors %}

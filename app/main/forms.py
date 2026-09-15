@@ -30,7 +30,9 @@ class AddArtistForm(FlaskForm):
 
     name = StringField("Artist Name", validators=[DataRequired(), Length(max=128)])
     country = StringField("Country (Optional)", validators=[Length(max=64)])
-    year_of_founding = IntegerField("Year of Founding (Optional)", validators=[Optional()])
+    year_of_founding = IntegerField(
+        "Year of Founding (Optional)", validators=[Optional()]
+    )
     notes = StringField("Notes (Optional)", validators=[Length(max=256)])
     submit = SubmitField("Add Artist")
 
@@ -54,6 +56,7 @@ class EditAlbumForm(FlaskForm):
         validators=[DataRequired()],
     )
     label = StringField("Label (Optional)", validators=[Length(max=64)])
+    discogs_id = IntegerField("Discogs ID (Optional)", validators=[Optional()])
     notes = StringField("Notes (Optional)", validators=[Length(max=256)])
     submit = SubmitField("Save Changes")
 
@@ -65,4 +68,4 @@ class EditTrackForm(FlaskForm):
     duration_seconds = IntegerField(
         "Duration in Seconds (Optional)", validators=[Optional()]
     )
-    submit = SubmitField("Save Changes")
+    submit = SubmitField("Save Track")

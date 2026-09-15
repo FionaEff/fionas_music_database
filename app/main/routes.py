@@ -10,6 +10,7 @@ from app.main.forms import (
     AddArtistForm,
 )
 from app.models import Artist, Album, Track, Genre
+from app.services import api
 
 
 @bp.route("/", methods=["GET"])
@@ -89,7 +90,7 @@ def add_artist():
 
         flash("The artist has been added.")
 
-        return redirect(url_for("main.artists"))
+        return redirect(url_for("main.artist_details", artist_id=new_artist.id))
 
     return render_template("add_artist.html", title="Add Artist", form=form)
 
@@ -186,12 +187,32 @@ def add_album():
         if genre:
             new_album.genres.append(genre)
 
+        if form.discogs_id.data:
+            release_details = api.get_release_details(str(form.discogs_id.data))
+
+            for track in release_details["tracklist"]:
+                if track["duration"]:
+                    minutes = track["duration"].split(":")
+                    duration = int(minutes[0]) * 60 + int(minutes[1])
+                else:
+                    duration = 0
+
+                new_track = Track(
+                    title=track["title"],
+                    track_number=track["position"],
+                    duration_seconds=duration,
+                    album_id=album_id,
+                )
+
+                db.session.add(new_track)
+                db.session.flush()
+
         db.session.add(new_album)
         db.session.commit()
 
         flash("The album has been added.")
 
-        return redirect(url_for("main.albums"))
+        return redirect(url_for("main.album_details", album_id=new_album.id))
 
     return render_template("add_album.html", title="Add Album", form=form)
 
@@ -227,7 +248,32 @@ def edit_album(album_id):
         album.year = form.year.data
         album.format = form.format.data
         album.label = form.label.data
+        album.discogs_id = form.discogs_id.data
         album.notes = form.notes.data
+
+        if form.discogs_id.data:
+            release_details = api.get_release_details(str(form.discogs_id.data))
+
+            album.title = release_details["title"]
+            album.year = release_details["year"]
+            album.label = release_details["labels"][0]["name"]
+
+            for track in release_details["tracklist"]:
+                if track["duration"]:
+                    minutes = track["duration"].split(":")
+                    duration = int(minutes[0]) * 60 + int(minutes[1])
+                else:
+                    duration = 0
+
+                new_track = Track(
+                    title=track["title"],
+                    track_number=track["position"],
+                    duration_seconds=duration,
+                    album_id=album_id,
+                )
+
+                db.session.add(new_track)
+                db.session.flush()
 
         db.session.commit()
 
