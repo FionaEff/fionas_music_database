@@ -1,36 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="album-details">
-    <div class="album-cover">
-        <h2>{{ album.title }}</h2>
+    <div class="album-details-cover">
+        <h2>{{ album.title }}</h2><br>
 
         {% if album.cover_path %}
         <img src="{{ url_for('static/images', filename=album.cover_path) }}">
         {% else %}
         No Cover
         {% endif %}
+        <br><br>
+
+        <p><b>Artist: </b>{{ album.artist.name }}</p>
+        <p><b>Year: </b>{{ album.year }}</p>
+        <p><b>Label: </b>{{ album.label or "-" }}</p>
+        <p><b>Format: </b>{{ album.format.value.capitalize() }}</p>
+
+        <p>
+            <b>Genres: </b>
+            {% for genre in album.genres %}
+            {{ genre.name }}
+            {% endfor %}
+        </p>
+
+        {% if album.notes %}
+        <p><b>Notes: </b>{{ album.notes }}</p>
+        {% endif %}
+
+        <p><button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button>
+        </p>
     </div>
 
-    <p><b>Artist: </b>{{ album.artist.name }}</p>
-    <p><b>Year: </b>{{ album.year }}</p>
-    <p><b>Label: </b>{{ album.label or "-" }}</p>
-    <p><b>Format: </b>{{ album.format.value.capitalize() }}</p>
-
-    <p>
-        <b>Genres: </b>
-        {% for genre in album.genres %}
-        {{ genre.name }}
-        {% endfor %}
-    </p>
-
-    {% if album.notes %}
-    <p><b>Notes: </b>{{ album.notes }}</p>
-    {% endif %}
-
-    <p><button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button></p>
-
     <div class="track-list">
-        <h3>Tracklist</h3>
+        <h3>Tracklist</h3><br>
         <table>
             <tr>
                 <th>Number</th>
@@ -50,8 +52,7 @@
             </tr>
             {% endfor %}
         </table>
+        <p><button type="button"><a href="{{ url_for('main.tracks', album_id=album.id) }}">Edit Tracks</a></button></p>
     </div>
-
-    <p><button type="button"><a href="{{ url_for('main.tracks', album_id=album.id) }}">Edit Tracks</a></button></p>
 </div>
 {% endblock %}

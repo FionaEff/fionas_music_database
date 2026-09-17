@@ -2,33 +2,38 @@
 {% block content %}
 
 <div class="edit-tracks">
-    <h2>Edit Tracks</h2>
+    <div class="edit-tracks-page">
+        <h2>Edit Tracks</h2><br>
 
-    <form class="edit-tracks-form" action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.title.label }}
-            {{ form.title }}
-            {% for error in form.title.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.track_number.label }}
-            {{ form.track_number }}
-            {% for error in form.track_number.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.duration_seconds.label }}
-            {{ form.duration_seconds }}
-            {% for error in form.duration_seconds.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            <br><br>
-        </p>
-        {% endfor %}
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
+        <form class="edit-tracks-form" action="" method="post">
+            {{ form.hidden_tag() }}
+            <table class="edit-tracks-form-table">
+                <tr>
+                    <td>{{ form.title.label }}</td>
+                    <td>{{ form.title }}</td>
+                    {% for error in form.title.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.track_number.label }}</td>
+                    <td>{{ form.track_number }}</td>
+                    {% for error in form.track_number.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.duration_seconds.label }}</td>
+                    <td>{{ form.duration_seconds }}</td>
+                    {% for error in form.duration_seconds.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+            </table>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
 </div>
 {% endblock %}

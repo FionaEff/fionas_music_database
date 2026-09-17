@@ -42,7 +42,7 @@ class EditArtistForm(FlaskForm):
     name = StringField("Artist Name", validators=[DataRequired(), Length(max=128)])
     country = StringField("Country (Optional)", validators=[Length(max=64)])
     year_of_founding = IntegerField("Founded (Optional)", validators=[Optional()])
-    notes = StringField("Notes (Optionla)", validators=[Length(max=256)])
+    notes = StringField("Notes (Optional)", validators=[Length(max=256)])
     submit = SubmitField("Save Changes")
 
 

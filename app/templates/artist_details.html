@@ -2,33 +2,40 @@
 {% block content %}
 
 <div class="artist-details">
-    <h2>{{ artist.name }}</h2>
+    <div class="artist-details-text">
+        <h2>{{ artist.name }}</h2><br>
 
-    <p><b>Country: </b>{{ artist.country or "-"}}</p>
-    <p><b>Founded: </b>{{ artist.year_of_founding or "-"}}</p>
+        <p><b>Country: </b>{{ artist.country or "-"}}</p>
+        <p><b>Founded: </b>{{ artist.year_of_founding or "-"}}</p><br>
 
-    {% if artist.notes %}
-    <p><b>Notes: </b>{{ artist.notes }}</p>
-    {% endif %}
+        {% if artist.notes %}
+        <p><b>Notes: </b>{{ artist.notes }}</p>
+        {% endif %}
+        <br>
 
-    <button type="button"><a href="{{ url_for('main.edit_artist', artist_id=artist.id) }}">Edit Artist</a></button>
+        <button type="button"><a href="{{ url_for('main.edit_artist', artist_id=artist.id) }}">Edit Artist</a></button>
+        <br><br>
+    </div>
 
-    <h2>Albums</h2>
-    <table>
-        <tr>
-            <th>Year</th>
-            <th>Title</th>
-            <th>Format</th>
-        </tr>
-        <tr>
-            {% for album in albums %}
-            <td>{{ album.year }}</td>
-            <td>{{ album.title }}</td>
-            <td>{{ album.format.value.capitalize() }}</td>
-            <td><button type="button"><a href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button></td>
-            {% endfor %}
-        </tr>
-    </table>
+    <div class="artist-details-albums">
+        <h2>Albums</h2><br>
+        <table>
+            <tr>
+                <th>Year</th>
+                <th>Title</th>
+                <th>Format</th>
+            </tr>
+            <tr>
+                {% for album in albums %}
+                <td>{{ album.year }}</td>
+                <td>{{ album.title }}</td>
+                <td>{{ album.format.value.capitalize() }}</td>
+                <td><button type="button"><a
+                            href="{{ url_for('main.album_details', album_id=album.id) }}">Details</a></button></td>
+                {% endfor %}
+            </tr>
+        </table>
+    </div>
 </div>
 
 {% endblock %}

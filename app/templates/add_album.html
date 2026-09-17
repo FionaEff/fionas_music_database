@@ -2,75 +2,87 @@
 {% block content %}
 
 <div class="add-album">
-    <h1>Add new Album</h1>
-    <form class="add-album-form" action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.album_name.label }}
-            {{ form.album_name }}
-            {% for error in form.album_name.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.new_artist.label }}
-            {{ form.new_artist }}
-            {% for error in form.new_artist.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.existing_artist.label }}
-            {{ form.existing_artist }}
-            {% for error in form.existing_artist.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.year.label }}
-            {{ form.year }}
-            {% for error in form.year.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.new_genre.label }}
-            {{ form.new_genre }}
-            {% for error in form.new_genre.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.existing_genre.label }}
-            {{ form.existing_genre }}
-            {% for error in form.existing_genre.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.format.label }}
-            {{ form.format }}
-            {% for error in form.format.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.label.label }}
-            {{ form.label }}
-            {% for error in form.label.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.discogs_id.label }}
-            {{ form.discogs_id }}
-            {% for error in form.discogs_id.errors %}
-            <span style="color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-            {{ form.notes.label }}
-            {{ form.notes }}
-            {% for error in form.notes.errors %}
-            <span style=" color: red;"">[{{ error }}]</span>
-            {% endfor %}
-            <br><br>
-        </p>
-        <p>
-            {{ form.submit() }}
-        </p>
-    </form>
+    <div class="add-album-page">
+        <h1>Add new Album</h1><br>
+        <form class="add-album-form" action="" method="post">
+            {{ form.hidden_tag() }}
+            <table class="add-album-form-table">
+                <tr>
+                    <td>{{ form.album_name.label }}</td>
+                    <td>{{ form.album_name }}</td>
+                    {% for error in form.album_name.errors %}
+                    <td>><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                <td>{{ form.new_artist.label }}</td>
+                <td>{{ form.new_artist }}</td>
+                {% for error in form.new_artist.errors %}
+                <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.existing_artist.label }}</td>
+                    <td>{{ form.existing_artist }}</td>
+                    {% for error in form.existing_artist.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.year.label }}</td>
+                    <td>{{ form.year }}</td>
+                    {% for error in form.year.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.new_genre.label }}</td>
+                    <td>{{ form.new_genre }}</td>
+                    {% for error in form.new_genre.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.existing_genre.label }}</td>
+                    <td>{{ form.existing_genre }}</td>
+                    {% for error in form.existing_genre.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.format.label }}</td>
+                    <td>{{ form.format }}</td>
+                    {% for error in form.format.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.label.label }}</td>
+                    <td>{{ form.label }}</td>
+                    {% for error in form.label.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.discogs_id.label }}</td>
+                    <td>{{ form.discogs_id }}</td>
+                    {% for error in form.discogs_id.errors %}
+                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.notes.label }}</td>
+                    <td>{{ form.notes }}</td>
+                    {% for error in form.notes.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+            </table>
+            <p>
+                {{ form.submit() }}
+            </p>
+        </form>
+    </div>
 </div>
 
 {% endblock %}

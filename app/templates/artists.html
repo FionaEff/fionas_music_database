@@ -2,26 +2,29 @@
 {% block content %}
 
 <div class="artists-list">
-    <table class="artists-list-table">
-        {% for artist in artists %}
-        <tr>
-            <td>{{ artist.name }}</td>
-            <td>
-                <button type="button"><a
-                        href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></button>
-            </td>
-            <td>
-                <form method="post" action="{{ url_for('main.delete_artist', artist_id=artist.id) }}"
-                    onsubmit="return confirm('Are you sure you want to delete this artist?');">
-                    <button type="submit" class="delete-button">Delete Artist</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
-    <p>
-        <button type="button"><a href="{{ url_for('main.add_artist') }}">Add Artist</a></button>
-    </p>
+    <div class="artists-list-page">
+        <h1>Artists</h1><br>
+        <table class="artists-list-table">
+            {% for artist in artists %}
+            <tr>
+                <td>{{ artist.name }}</td>
+                <td>
+                    <button type="button"><a
+                            href="{{ url_for('main.artist_details', artist_id=artist.id) }}">Details</a></button>
+                </td>
+                <td>
+                    <form method="post" action="{{ url_for('main.delete_artist', artist_id=artist.id) }}"
+                        onsubmit="return confirm('Are you sure you want to delete this artist?');">
+                        <button type="submit" class="delete-button">Delete Artist</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <p>
+            <button type="button"><a href="{{ url_for('main.add_artist') }}">Add Artist</a></button>
+        </p>
+    </div>
 </div>
 
 {% endblock %}

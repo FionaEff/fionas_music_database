@@ -255,7 +255,7 @@ def edit_album(album_id):
         album.discogs_id = form.discogs_id.data
         album.notes = form.notes.data
 
-        if form.discogs_id.data:
+        if form.discogs_id.data and not album.discogs_id:
             release_details = api.get_release_details(str(form.discogs_id.data))
 
             if not release_details:
@@ -266,6 +266,8 @@ def edit_album(album_id):
             album.year = release_details["year"]
             album.label = release_details["labels"][0]["name"]
 
+            track_number = 1
+
             for track in release_details["tracklist"]:
                 if track["duration"]:
                     minutes = track["duration"].split(":")
@@ -275,10 +277,12 @@ def edit_album(album_id):
 
                 new_track = Track(
                     title=track["title"],
-                    track_number=track["position"],
+                    track_number=track_number,
                     duration_seconds=duration,
                     album_id=album_id,
                 )
+
+                track_number += 1
 
                 db.session.add(new_track)
                 db.session.flush()
