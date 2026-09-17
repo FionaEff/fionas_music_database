@@ -141,6 +141,24 @@ nav {
     font-weight: 800;
 }
 
+.landing-page {
+    height: 100%;
+    width: 95%;
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.landing-page-content {
+    text-align: center;
+}
+
+.latest-additions {
+    text-align: left;
+}
+
 .albums-list {
     height: 100%;
     width: 95%;

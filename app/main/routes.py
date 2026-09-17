@@ -16,7 +16,10 @@ from app.services import api
 @bp.route("/", methods=["GET"])
 @bp.route("/index", methods=["GET"])
 def index():
-    return render_template("index.html", title="Home")
+
+    albums = db.session.scalars(sa.select(Album).order_by(Album.id.desc()).limit(5))
+
+    return render_template("index.html", title="Home", albums=albums)
 
 
 @bp.route("/artists", methods=["GET"])
@@ -30,7 +33,7 @@ def artists():
 @bp.route("/artist_details/<int:artist_id>", methods=["GET"])
 def artist_details(artist_id):
 
-    artist = db.session.scalar(sa.Select(Artist).where(Artist.id == artist_id))
+    artist = db.session.scalar(sa.select(Artist).where(Artist.id == artist_id))
     albums = db.session.scalars(
         sa.Select(Album).where(Album.artist_id == artist_id).order_by(Album.year)
     ).all()
@@ -47,7 +50,7 @@ def artist_details(artist_id):
 @bp.route("/edit_artist/<int:artist_id>", methods=["GET", "POST"])
 def edit_artist(artist_id):
 
-    artist = db.session.scalar(sa.Select(Artist).where(Artist.id == artist_id))
+    artist = db.session.scalar(sa.select(Artist).where(Artist.id == artist_id))
 
     if not artist:
         flash("Artist not found.")
