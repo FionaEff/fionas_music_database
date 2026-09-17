@@ -32,6 +32,7 @@
             </table>
             <p>
                 {{ form.submit() }}
+                <button type="button" class="cancel-button"><a href="{{ url_for('main.tracks', album_id=track.album.id) }}">Cancel</a></button>
             </p>
         </form>
     </div>

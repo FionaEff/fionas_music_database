@@ -26,7 +26,7 @@
         {% if album.notes %}
         <p><b>Notes: </b>{{ album.notes }}</p>
         {% endif %}
-
+        <br>
         <p><button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button>
         </p>
     </div>

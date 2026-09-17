@@ -81,6 +81,16 @@ nav {
     border: 1px solid;
 }
 
+.cancel-button {
+    cursor: pointer;
+    border-radius: 4px;
+    width: 100px;
+    height: 2rem;
+    border: 1px solid;
+    border-color: grey;
+    margin-left: 30px;
+}
+
 .navbar {
     position: fixed;
     top: 0;
