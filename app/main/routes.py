@@ -197,6 +197,14 @@ def add_album():
                 flash("No Discogs data found.")
                 return redirect(url_for("main.add_album"))
 
+            if release_details["title"] != form.album_name.data:
+                flash("Discogs ID doens't match album title.")
+                return redirect(url_for("main.add_album"))
+
+            new_album.title = release_details["title"]
+            new_album.year = release_details["year"]
+            new_album.label = release_details["labels"][0]["name"]
+
             for track in release_details["tracklist"]:
                 if track["duration"]:
                     minutes = track["duration"].split(":")
@@ -208,7 +216,7 @@ def add_album():
                     title=track["title"],
                     track_number=track["position"],
                     duration_seconds=duration,
-                    album_id=album_id,
+                    album_id=new_album.id,
                 )
 
                 db.session.add(new_track)
@@ -258,37 +266,42 @@ def edit_album(album_id):
         album.discogs_id = form.discogs_id.data
         album.notes = form.notes.data
 
-        if form.discogs_id.data and not album.discogs_id:
-            release_details = api.get_release_details(str(form.discogs_id.data))
+        if form.discogs_id.data:
+            if form.discogs_id.data != album.discogs_id or not album.discogs_id:
+                release_details = api.get_release_details(str(form.discogs_id.data))
 
-            if not release_details:
-                flash("No Discogs data found.")
-                return redirect(url_for("main.edit_album", album_id=album_id))
+                if not release_details:
+                    flash("No Discogs data found.")
+                    return redirect(url_for("main.edit_album", album_id=album_id))
 
-            album.title = release_details["title"]
-            album.year = release_details["year"]
-            album.label = release_details["labels"][0]["name"]
+                if release_details["title"] != form.title.data:
+                    flash("Discogs ID doens't match album title.")
+                    return redirect(url_for("main.edit_album", album_id=album_id))
 
-            track_number = 1
+                album.title = release_details["title"]
+                album.year = release_details["year"]
+                album.label = release_details["labels"][0]["name"]
 
-            for track in release_details["tracklist"]:
-                if track["duration"]:
-                    minutes = track["duration"].split(":")
-                    duration = int(minutes[0]) * 60 + int(minutes[1])
-                else:
-                    duration = 0
+                track_number = 1
 
-                new_track = Track(
-                    title=track["title"],
-                    track_number=track_number,
-                    duration_seconds=duration,
-                    album_id=album_id,
-                )
+                for track in release_details["tracklist"]:
+                    if track["duration"]:
+                        minutes = track["duration"].split(":")
+                        duration = int(minutes[0]) * 60 + int(minutes[1])
+                    else:
+                        duration = 0
 
-                track_number += 1
+                    new_track = Track(
+                        title=track["title"],
+                        track_number=track_number,
+                        duration_seconds=duration,
+                        album_id=album_id,
+                    )
 
-                db.session.add(new_track)
-                db.session.flush()
+                    track_number += 1
+
+                    db.session.add(new_track)
+                    db.session.flush()
 
         db.session.commit()
 
