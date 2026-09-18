@@ -1,4 +1,5 @@
 import requests
+from app.errors import exceptions
 
 headers = {"user-agent": "FionasMusicDatabase/0.1"}
 
@@ -22,6 +23,6 @@ def get_release_details(release_id: str) -> dict:
     release_details = make_request(release_url, release_id)
 
     if not release_details:
-        raise Exception("No release details data found.")
+        raise exceptions.NoDataError("No release details data found.")
 
     return release_details

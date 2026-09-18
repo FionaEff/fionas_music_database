@@ -148,12 +148,30 @@ def add_album():
     if form.validate_on_submit():
 
         if form.new_artist.data and form.existing_artist.data == 0:
-            artist = Artist(name=form.new_artist.data)
-            db.session.add(artist)
-            db.session.flush()
+            if any(
+                form.new_artist.data in artist
+                for artist in form.existing_artist.choices
+            ):
+                flash(
+                    "Artist already exists, please select them from the existing artist list."
+                )
+
+                return render_template("add_album.html", title="Add Album", form=form)
+
+            else:
+                artist = Artist(name=form.new_artist.data)
+                db.session.add(artist)
+                db.session.flush()
 
         elif form.existing_artist.data != 0 and not form.new_artist.data:
             artist = db.session.get(Artist, form.existing_artist.data)
+
+        elif not form.new_artist.data and form.existing_artist == 0:
+            flash(
+                "Please enter a new artist or select one from the existing artist list."
+            )
+
+            return render_template("add_album.html", title="Add Album", form=form)
 
         else:
             flash(
@@ -163,12 +181,29 @@ def add_album():
             return render_template("add_album.html", title="Add Album", form=form)
 
         if form.new_genre.data and form.existing_genre.data == 0:
-            genre = Genre(name=form.new_genre.data)
-            db.session.add(genre)
-            db.session.flush()
+            if any(
+                form.new_genre.data in genre for genre in form.existing_genre.choices
+            ):
+                flash(
+                    "Genre already exists, please select it from the existing genre list."
+                )
+
+                return render_template("add_album.html", title="Add Album", form=form)
+
+            else:
+                genre = Genre(name=form.new_genre.data)
+                db.session.add(genre)
+                db.session.flush()
 
         elif form.existing_genre.data != 0 and not form.new_genre.data:
             genre = db.session.get(Genre, form.existing_genre.data)
+
+        elif not form.new_genre.data and form.existing_genre == 0:
+            flash(
+                "Please eneter a new genre or select one from the existing genre list."
+            )
+
+            return render_template("add_album.html", title="Add Album", form=form)
 
         else:
             flash(
@@ -190,6 +225,9 @@ def add_album():
         if genre:
             new_album.genres.append(genre)
 
+        db.session.add(new_album)
+        db.session.flush()
+
         if form.discogs_id.data:
             release_details = api.get_release_details(str(form.discogs_id.data))
 
@@ -199,11 +237,13 @@ def add_album():
 
             if release_details["title"] != form.album_name.data:
                 flash("Discogs ID doens't match album title.")
-                return redirect(url_for("main.add_album"))
+                return render_template("add_album.html", title="Add Album", form=form)
 
             new_album.title = release_details["title"]
             new_album.year = release_details["year"]
             new_album.label = release_details["labels"][0]["name"]
+
+            track_number = 1
 
             for track in release_details["tracklist"]:
                 if track["duration"]:
@@ -214,15 +254,16 @@ def add_album():
 
                 new_track = Track(
                     title=track["title"],
-                    track_number=track["position"],
+                    track_number=track_number,
                     duration_seconds=duration,
                     album_id=new_album.id,
                 )
 
+                track_number += 1
+
                 db.session.add(new_track)
                 db.session.flush()
 
-        db.session.add(new_album)
         db.session.commit()
 
         flash("The album has been added.")
