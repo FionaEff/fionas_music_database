@@ -12,21 +12,21 @@
                     <td>{{ form.title.label }}</td>
                     <td>{{ form.title }}</td>
                     {% for error in form.title.errors %}
-                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    <td><span style="color: red;">[{{ error }}]</span></td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>{{ form.track_number.label }}</td>
                     <td>{{ form.track_number }}</td>
                     {% for error in form.track_number.errors %}
-                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                    <td><span style="color: red;">[{{ error }}]</span></td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <td>{{ form.duration_seconds.label }}</td>
                     <td>{{ form.duration_seconds }}</td>
                     {% for error in form.duration_seconds.errors %}
-                    <td><span style="color: red;"">[{{ error }}]</span></td>
+                    <td><span style="color: red;">[{{ error }}]</span></td>
                     {% endfor %}
                 </tr>
             </table>
