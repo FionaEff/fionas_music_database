@@ -340,6 +340,8 @@ def edit_album(album_id):
     form = EditAlbumForm(obj=album)
 
     if form.validate_on_submit():
+        current_discogs_id = album.discogs_id
+
         album.title = form.title.data
         album.year = form.year.data
         album.format = form.format.data
@@ -347,8 +349,8 @@ def edit_album(album_id):
         album.discogs_id = form.discogs_id.data
         album.notes = form.notes.data
 
-        if form.discogs_id.data:
-            # if album.discogs_id != form.discogs_id.data:
+        if form.discogs_id.data and current_discogs_id != form.discogs_id.data:
+
             release_details = api.get_release_details(str(form.discogs_id.data))
 
             if not release_details:
