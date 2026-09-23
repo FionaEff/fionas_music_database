@@ -1,2 +1,2 @@
 FLASK_APP=fionas_music_database.py
-FLASK_DEBUG=0
+FLASK_DEBUG=1

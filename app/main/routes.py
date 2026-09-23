@@ -1,4 +1,5 @@
 import sqlalchemy as sa
+import os
 from flask import render_template, flash, redirect, url_for
 from app import db
 from app.main import bp
@@ -11,6 +12,25 @@ from app.main.forms import (
 )
 from app.models import Artist, Album, Track, Genre
 from app.services import api
+
+
+def create_folder(artist_name):
+
+    album_cover_path = "./app/static/album_cover/"
+
+    if not os.path.exists(album_cover_path + artist_name.replace(" ", "_")):
+        os.makedirs(album_cover_path + artist_name.replace(" ", "_"))
+
+
+def rename_folder(artist_name, new_artist_name):
+
+    album_cover_path = "./app/static/album_cover/"
+
+    if os.path.exists(album_cover_path + artist_name):
+        os.rename(
+            album_cover_path + artist_name,
+            album_cover_path + new_artist_name,
+        )
 
 
 @bp.route("/", methods=["GET"])
@@ -51,6 +71,7 @@ def artist_details(artist_id):
 def edit_artist(artist_id):
 
     artist = db.session.scalar(sa.select(Artist).where(Artist.id == artist_id))
+    artist_name = artist.name
 
     if not artist:
         flash("Artist not found.")
@@ -65,6 +86,12 @@ def edit_artist(artist_id):
         artist.notes = form.notes.data
 
         db.session.commit()
+
+        if artist.name != artist_name:
+            rename_folder(
+                artist_name.lower().replace(" ", "_"),
+                artist.name.lower().replace(" ", "_"),
+            )
 
         flash("Artist updated.")
 
@@ -90,6 +117,8 @@ def add_artist():
 
         db.session.add(new_artist)
         db.session.commit()
+
+        create_folder(new_artist.name.lower().replace(" ", "_"))
 
         flash("The artist has been added.")
 
@@ -162,6 +191,7 @@ def add_album():
                 artist = Artist(name=form.new_artist.data)
                 db.session.add(artist)
                 db.session.flush()
+                create_folder(artist.name.lower())
 
         elif form.existing_artist.data != 0 and not form.new_artist.data:
             artist = db.session.get(Artist, form.existing_artist.data)
@@ -264,6 +294,16 @@ def add_album():
                 db.session.add(new_track)
                 db.session.flush()
 
+            cover_path = f"./app/static/album_cover/{new_album.artist.name.lower().replace(" ", "_")}/{new_album.title.lower().replace(" ", "_")}.jpg"
+            cover_url = f"{release_details["images"][0]["resource_url"]}"
+            cover_image = api.download_cover_image(cover_url)
+
+            if cover_image:
+                with open(cover_path, "wb") as file:
+                    file.write(cover_image)
+
+                    new_album.cover_path = f"album_cover/{new_album.artist.name.lower().replace(" ", "_")}/{new_album.title.lower().replace(" ", "_")}.jpg"
+
         db.session.commit()
 
         flash("The album has been added.")
@@ -308,41 +348,51 @@ def edit_album(album_id):
         album.notes = form.notes.data
 
         if form.discogs_id.data:
-            if form.discogs_id.data != album.discogs_id or not album.discogs_id:
-                release_details = api.get_release_details(str(form.discogs_id.data))
+            # if album.discogs_id != form.discogs_id.data:
+            release_details = api.get_release_details(str(form.discogs_id.data))
 
-                if not release_details:
-                    flash("No Discogs data found.")
-                    return redirect(url_for("main.edit_album", album_id=album_id))
+            if not release_details:
+                flash("No Discogs data found.")
+                return redirect(url_for("main.edit_album", album_id=album_id))
 
-                if release_details["title"] != form.title.data:
-                    flash("Discogs ID doens't match album title.")
-                    return redirect(url_for("main.edit_album", album_id=album_id))
+            if release_details["title"] != form.title.data:
+                flash("Discogs ID doens't match album title.")
+                return redirect(url_for("main.edit_album", album_id=album_id))
 
-                album.title = release_details["title"]
-                album.year = release_details["year"]
-                album.label = release_details["labels"][0]["name"]
+            album.title = release_details["title"]
+            album.year = release_details["year"]
+            album.label = release_details["labels"][0]["name"]
 
-                track_number = 1
+            track_number = 1
 
-                for track in release_details["tracklist"]:
-                    if track["duration"]:
-                        minutes = track["duration"].split(":")
-                        duration = int(minutes[0]) * 60 + int(minutes[1])
-                    else:
-                        duration = 0
+            for track in release_details["tracklist"]:
+                if track["duration"]:
+                    minutes = track["duration"].split(":")
+                    duration = int(minutes[0]) * 60 + int(minutes[1])
+                else:
+                    duration = 0
 
-                    new_track = Track(
-                        title=track["title"],
-                        track_number=track_number,
-                        duration_seconds=duration,
-                        album_id=album_id,
-                    )
+                new_track = Track(
+                    title=track["title"],
+                    track_number=track_number,
+                    duration_seconds=duration,
+                    album_id=album_id,
+                )
 
-                    track_number += 1
+                track_number += 1
 
-                    db.session.add(new_track)
-                    db.session.flush()
+                db.session.add(new_track)
+                db.session.flush()
+
+            cover_path = f"./app/static/album_cover/{album.artist.name.lower().replace(" ", "_")}/{album.title.lower().replace(" ", "_")}.jpg"
+            cover_url = f"{release_details["images"][0]["resource_url"]}"
+            cover_image = api.download_cover_image(cover_url)
+
+            if cover_image:
+                with open(cover_path, "wb") as file:
+                    file.write(cover_image)
+
+                    album.cover_path = f"album_cover/{album.artist.name.lower().replace(" ", "_")}/{album.title.lower().replace(" ", "_")}.jpg"
 
         db.session.commit()
 

@@ -5,7 +5,7 @@
         <h2>{{ album.title }}</h2><br>
 
         {% if album.cover_path %}
-        <img src="{{ url_for('static/images', filename=album.cover_path) }}">
+        <img src="{{ url_for('static', filename=album.cover_path) }}" width="200" height="200">
         {% else %}
         No Cover
         {% endif %}
