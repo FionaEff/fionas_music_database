@@ -75,7 +75,7 @@ class Genre(db.Model):
     __tablename__ = "genre"
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    name: so.Mapped[str] = so.mapped_column(sa.String(32), index=True, unique=True)
+    name: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
 
     albums: so.Mapped[list["Album"]] = so.relationship(
         secondary=album_genres, back_populates="genres"

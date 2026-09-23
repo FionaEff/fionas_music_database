@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="album-genres">
+    <div class="album-genres-page">
+        <h1>{{ album.title }} - Add Genre</h1><br>
+        <div class="genre-list">
+            <table>
+                {% for genre in album.genres %}
+                <tr>
+                    <td>{{ genre.name }}</td>
+                    <td>
+                        <form method="post"
+                            action="{{ url_for('main.remove_genre', album_id=album.id, genre_id=genre.id) }}"
+                            onsubmit="return confirm('Are you sure you want to remove this genre from the album?');">
+                            <button type="submit" class="delete-button">Remove Genre</button>
+                        </form>
+                    </td>
+                    {% endfor %}
+                </tr>
+            </table>
+        </div>
+
+        <br>
+        <h2>Add new Genre</h2><br>
+
+        <div class="add-genre">
+            <form class="add-genre-form" action="" method="post">
+                {{ form.hidden_tag() }}
+                <table class="add-genre-form-table">
+                    <tr>
+                        <td>{{ form.new_genre.label }}</td>
+                        <td>{{ form.new_genre }}</td>
+                        {% for error in form.new_genre.errors %}
+                        <td><span style="color: red;"">[{{ error }}]</span></td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <td>{{ form.existing_genre.label }}</td>
+                    <td>{{ form.existing_genre }}</td>
+                    {% for error in form.existing_genre.errors %}
+                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                        {% endfor %}
+                    </tr>
+                </table>
+                <p>
+                    {{ form.submit() }}
+                    <button type=" button" class="cancel-button"><a
+                            href="{{ url_for('main.album_details', album_id=album.id) }}">Cancel</a></button>
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

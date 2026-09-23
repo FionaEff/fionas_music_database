@@ -17,9 +17,11 @@
         <p><b>Format: </b>{{ album.format.value.capitalize() }}</p>
 
         <p>
-            <b>Genres: </b>
+            <b>Genres: </b><br>
             {% for genre in album.genres %}
-            {{ genre.name }}
+            <ul>
+                <li>{{ genre.name }}</li>
+            </ul>
             {% endfor %}
         </p>
 
@@ -27,7 +29,9 @@
         <p><b>Notes: </b>{{ album.notes }}</p>
         {% endif %}
         <br>
-        <p><button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button>
+        <p>
+            <button type="button"><a href="{{ url_for('main.edit_album', album_id=album.id) }}">Edit Album</a></button>
+            <button type="button"><a href="{{ url_for('main.add_genre', album_id=album.id) }}">Add Genre</a></button>
         </p>
     </div>
 

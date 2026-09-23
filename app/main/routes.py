@@ -9,6 +9,7 @@ from app.main.forms import (
     EditAlbumForm,
     EditTrackForm,
     AddArtistForm,
+    AddGenreForm,
 )
 from app.models import Artist, Album, Track, Genre
 from app.services import api
@@ -350,7 +351,6 @@ def edit_album(album_id):
         album.notes = form.notes.data
 
         if form.discogs_id.data and current_discogs_id != form.discogs_id.data:
-
             release_details = api.get_release_details(str(form.discogs_id.data))
 
             if not release_details:
@@ -403,6 +403,115 @@ def edit_album(album_id):
         return redirect(url_for("main.album_details", album_id=album.id))
 
     return render_template("edit_album.html", title=album.title, form=form, album=album)
+
+
+@bp.route("/edit_album/<int:album_id>/genres", methods=["GET", "POST"])
+def add_genre(album_id):
+
+    genre = None
+
+    album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
+
+    if not album:
+        flash("Album not found.")
+        return redirect(url_for("main.album_details", album_id=album_id))
+
+    genres = db.session.scalars(sa.select(Genre).order_by(Genre.name)).all()
+
+    if not genres:
+        flash("No genres found.")
+        return redirect(url_for("main.album_details", album_id=album_id))
+
+    form = AddGenreForm()
+
+    form.existing_genre.choices = [(0, "Select Genre")] + [
+        (genre.id, genre.name) for genre in genres
+    ]
+
+    if form.validate_on_submit():
+        if form.new_genre.data and form.existing_genre.data == 0:
+            if any(
+                form.new_genre.data in genre for genre in form.existing_genre.choices
+            ):
+                flash(
+                    "Genre already exists, please select it from the existing genre list."
+                )
+
+                return render_template(
+                    "add_genre.html",
+                    title=f"{album.title} - Add Genre",
+                    album=album,
+                    form=form,
+                )
+
+            else:
+                genre = Genre(name=form.new_genre.data)
+                db.session.add(genre)
+                db.session.flush()
+
+        elif form.existing_genre.data != 0 and not form.new_genre.data:
+            genre = db.session.get(Genre, form.existing_genre.data)
+
+        elif not form.new_genre.data and form.existing_genre == 0:
+            flash(
+                "Please eneter a new genre or select one from the existing genre list."
+            )
+
+            return render_template(
+                "add_genre.html",
+                title=f"{album.title} - Add Genre",
+                album=album,
+                form=form,
+            )
+
+        else:
+            flash(
+                "You can either enter a new genre or select one from the list of existing genres."
+            )
+
+            return render_template(
+                "add_genre.html",
+                title=f"{album.title} - Add Genre",
+                album=album,
+                form=form,
+            )
+
+        if genre:
+            album.genres.append(genre)
+
+        db.session.commit()
+
+        flash("New genre has been added to album.")
+
+        return redirect(url_for("main.album_details", album_id=album_id))
+
+    return render_template(
+        "add_genre.html", title=f"{album.title} - Add Genre", album=album, form=form
+    )
+
+
+@bp.route("/edit_album/<int:album_id>/genres/<int:genre_id>/remove", methods=["POST"])
+def remove_genre(album_id, genre_id):
+
+    album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
+
+    if not album:
+        flash("Album not found.")
+        return redirect(url_for("main.album_details", album_id=album_id))
+
+    genre = db.session.scalar(sa.select(Genre).where(Genre.id == genre_id))
+
+    if genre:
+        album.genres.remove(genre)
+        db.session.commit()
+
+        flash("Genre removed from album.")
+
+        return redirect(url_for("main.album_details", album_id=album_id))
+
+    else:
+        flash("Genre not found.")
+        return redirect(url_for("main.album_details", album_id=album_id))
 
 
 @bp.route("/albums/<int:album_id>/delete", methods=["GET", "POST"])

@@ -69,3 +69,10 @@ class EditTrackForm(FlaskForm):
         "Duration in Seconds (Optional)", validators=[Optional()]
     )
     submit = SubmitField("Save Track")
+
+
+class AddGenreForm(FlaskForm):
+
+    new_genre = StringField("Name", validators=[Length(max=64)])
+    existing_genre = SelectField("Select Genre", coerce=int)
+    submit = SubmitField("Save Genre")
