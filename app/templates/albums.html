@@ -5,6 +5,9 @@
     <div class="albums-list-page">
         <h1>Albums</h1><br>
         <table class="albums-list-table">
+            <th>Artist</th>
+            <th>Year</th>
+            <th>Album</th>
             {% for album in albums %}
             <tr>
                 <td><b>{{ album.artist.name }}</b></td>

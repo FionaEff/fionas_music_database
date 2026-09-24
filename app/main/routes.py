@@ -1,6 +1,6 @@
 import sqlalchemy as sa
 import os
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request
 from app import db
 from app.main import bp
 from app.main.forms import (
@@ -626,3 +626,43 @@ def delete_genre(genre_id):
     flash("Genre deleted.")
 
     return redirect(url_for("main.genres"))
+
+
+@bp.route("/search", methods=["GET", "POST"])
+def search():
+
+    search_term = request.args.get("st", "").strip()
+    limit = 5
+
+    artists = (
+        db.session.query(Artist)
+        .filter(Artist.name.ilike(f"%{search_term}%"))
+        .order_by(Artist.name)
+        .limit(limit)
+        .all()
+    )
+
+    albums = (
+        db.session.query(Album)
+        .filter(Album.title.ilike(f"%{search_term}%"))
+        .order_by(Album.title)
+        .limit(limit)
+        .all()
+    )
+
+    tracks = (
+        db.session.query(Track)
+        .filter(Track.title.ilike(f"%{search_term}%"))
+        .order_by(Track.title)
+        .limit(limit)
+        .all()
+    )
+
+    return render_template(
+        "search_results.html",
+        title="Search Results",
+        search_term=search_term,
+        artists=artists,
+        albums=albums,
+        tracks=tracks,
+    )

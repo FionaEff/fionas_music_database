@@ -117,6 +117,23 @@ nav {
     padding: 3rem;
 }
 
+.navbar-left {
+    width: 80%;
+    margin-left: 2rem;
+}
+
+.navbar-right {
+    width: 20%;
+}
+
+.search-bar-form {
+    input {
+        width: 250px;
+        height: 2rem;
+        font-size: 1rem;
+    }
+}
+
 .content {
     box-sizing: border-box;
     display: flex;

@@ -17,13 +17,26 @@
 <body>
     <div class="navbar">
         <nav>
-            <ul>
-                <li><a href="{{ url_for('main.index') }}">Home</a></li>
-                <li><a href="{{ url_for('main.artists') }}">Artists</a></li>
-                <li><a href="{{ url_for('main.albums') }}">Albums</a></li>
-                <li><a href="{{ url_for('main.genres') }}">Genres</a></li>
-                <li><a href="{{ url_for('main.add_album') }}">Add Album</a></li>
-            </ul>
+            <div class="navbar-left">
+                <ul>
+                    <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                    <li><a href="{{ url_for('main.artists') }}">Artists</a></li>
+                    <li><a href="{{ url_for('main.albums') }}">Albums</a></li>
+                    <li><a href="{{ url_for('main.genres') }}">Genres</a></li>
+                    <li><a href="{{ url_for('main.add_album') }}">Add Album</a></li>
+                </ul>
+            </div>
+            <div class="navbar-right">
+                <ul class="search-bar">
+                    <li>
+                        <form class="search-bar-form" method="GET" action="{{ url_for('main.search') }}">
+                            <input type="search" name="st" placeholder="Search artists, albums or tracks."
+                                value="{{ request.args.get('st', '') }}" required>
+                            <button type="submit">Search</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
         </nav>
     </div>
 
