@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="genres">
+    <div class="genres-page">
+        <h1>Genres</h1><br>
+        <table class="genre-list-table">
+            {% for genre in genres %}
+            <tr>
+                <td>{{ genre.id }}</td>
+                <td>{{ genre.name }}</td>
+                <td>
+                    <form method="post"
+                        action="{{ url_for('main.delete_genre', genre_id=genre.id) }}"
+                        onsubmit="return confirm('Are you sure you want to delete this genre?');">
+                        <button type="submit" class="delete-button">Delete Genre</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

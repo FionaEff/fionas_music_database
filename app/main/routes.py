@@ -128,7 +128,7 @@ def add_artist():
     return render_template("add_artist.html", title="Add Artist", form=form)
 
 
-@bp.route("/artists/<int:artist_id>/delete", methods=["GET", "POST"])
+@bp.route("/artists/<int:artist_id>/delete", methods=["POST"])
 def delete_artist(artist_id):
 
     artist = db.session.scalar(sa.select(Artist).where(Artist.id == artist_id))
@@ -514,7 +514,7 @@ def remove_genre(album_id, genre_id):
         return redirect(url_for("main.album_details", album_id=album_id))
 
 
-@bp.route("/albums/<int:album_id>/delete", methods=["GET", "POST"])
+@bp.route("/albums/<int:album_id>/delete", methods=["POST"])
 def delete_album(album_id):
 
     album = db.session.scalar(sa.select(Album).where(Album.id == album_id))
@@ -586,7 +586,7 @@ def edit_track(track_id):
     )
 
 
-@bp.route("/tracks/<int:track_id>/delete", methods=["GET", "POST"])
+@bp.route("/tracks/<int:track_id>/delete", methods=["POST"])
 def delete_track(track_id):
 
     track = db.session.scalar(sa.select(Track).where(Track.id == track_id))
@@ -601,3 +601,28 @@ def delete_track(track_id):
     flash("Track deleted.")
 
     return redirect(url_for("main.tracks", album_id=track.album_id))
+
+
+@bp.route("/genres", methods=["GET", "POST"])
+def genres():
+
+    genres = db.session.scalars(sa.select(Genre).order_by(Genre.id))
+
+    return render_template("genres.html", title="Genres", genres=genres)
+
+
+@bp.route("/genres/<int:genre_id>/delete", methods=["POST"])
+def delete_genre(genre_id):
+
+    genre = db.session.scalar(sa.select(Genre).where(Genre.id == genre_id))
+
+    if not genre:
+        flash("Genre not found.")
+        return redirect(url_for("main.genres"))
+
+    db.session.delete(genre)
+    db.session.commit()
+
+    flash("Genre deleted.")
+
+    return redirect(url_for("main.genres"))

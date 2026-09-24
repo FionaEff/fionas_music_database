@@ -4,7 +4,7 @@
     <div class="album-genres-page">
         <h1>{{ album.title }} - Add Genre</h1><br>
         <div class="genre-list">
-            <table>
+            <table class="genre-list-table">
                 {% for genre in album.genres %}
                 <tr>
                     <td>{{ genre.name }}</td>
@@ -31,14 +31,14 @@
                         <td>{{ form.new_genre.label }}</td>
                         <td>{{ form.new_genre }}</td>
                         {% for error in form.new_genre.errors %}
-                        <td><span style="color: red;"">[{{ error }}]</span></td>
-                    {% endfor %}
-                </tr>
-                <tr>
-                    <td>{{ form.existing_genre.label }}</td>
-                    <td>{{ form.existing_genre }}</td>
-                    {% for error in form.existing_genre.errors %}
-                    <td><span style=" color: red;"">[{{ error }}]</span></td>
+                        <td><span style="color: red;">[{{ error }}]</span></td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>{{ form.existing_genre.label }}</td>
+                        <td>{{ form.existing_genre }}</td>
+                        {% for error in form.existing_genre.errors %}
+                        <td><span style="color: red;">[{{ error }}]</span></td>
                         {% endfor %}
                     </tr>
                 </table>

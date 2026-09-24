@@ -488,8 +488,9 @@ nav {
     text-align: center;
 }
 
-.genre-list {
-    margin-left: 5rem;
+.genre-list-table {
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .add-genre-form {
@@ -514,4 +515,18 @@ nav {
         border: none;
         text-align: right;
     }
+}
+
+.genres {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5rem;
+}
+
+.genres-page {
+    text-align: center;
 }
