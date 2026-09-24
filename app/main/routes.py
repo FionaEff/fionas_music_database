@@ -19,8 +19,8 @@ def create_folder(artist_name):
 
     album_cover_path = "./app/static/album_cover/"
 
-    if not os.path.exists(album_cover_path + artist_name.replace(" ", "_")):
-        os.makedirs(album_cover_path + artist_name.replace(" ", "_"))
+    if not os.path.exists(album_cover_path + artist_name):
+        os.makedirs(album_cover_path + artist_name)
 
 
 def rename_folder(artist_name, new_artist_name):
@@ -32,6 +32,14 @@ def rename_folder(artist_name, new_artist_name):
             album_cover_path + artist_name,
             album_cover_path + new_artist_name,
         )
+
+
+def delete_cover_image(artist_name, album_title):
+
+    album_cover_path = "./app/static/album_cover/"
+
+    if os.path.exists(album_cover_path + artist_name):
+        os.remove(f"{album_cover_path}{artist_name}/{album_title}.jpg")
 
 
 @bp.route("/", methods=["GET"])
@@ -192,7 +200,7 @@ def add_album():
                 artist = Artist(name=form.new_artist.data)
                 db.session.add(artist)
                 db.session.flush()
-                create_folder(artist.name.lower())
+                create_folder(artist.name.lower().replace(" ", "_"))
 
         elif form.existing_artist.data != 0 and not form.new_artist.data:
             artist = db.session.get(Artist, form.existing_artist.data)
@@ -522,6 +530,11 @@ def delete_album(album_id):
     if not album:
         flash("Album not found.")
         return redirect(url_for("main.albums"))
+
+    delete_cover_image(
+        album.artist.name.lower().replace(" ", "_"),
+        album.title.lower().replace(" ", "_"),
+    )
 
     db.session.delete(album)
     db.session.commit()

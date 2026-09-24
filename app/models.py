@@ -14,8 +14,16 @@ class AlbumFormat(Enum):
 album_genres = sa.Table(
     "album_genres",
     db.metadata,
-    sa.Column("album_id", sa.ForeignKey("album.id", name="fk_album_genres_album_id", ondelete="CASCADE"), primary_key=True),
-    sa.Column("genre_id", sa.ForeignKey("genre.id",name="fk_album_genres_genre_id", ondelete="CASCADE"), primary_key=True),
+    sa.Column(
+        "album_id",
+        sa.ForeignKey("album.id", name="fk_album_genres_album_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    sa.Column(
+        "genre_id",
+        sa.ForeignKey("genre.id", name="fk_album_genres_genre_id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
 )
 
 
