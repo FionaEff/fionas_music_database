@@ -7,11 +7,11 @@ Features:
 - Add tracks to every album with duration.
 - Add artists with various infos like year of founding and country.
 - Edit every entry individually.
-- Use the Discogs API feature to automatically add tracks and information to albums.
+- Use the Discogs API feature to automatically add tracks, information and cover image to albums.
 
 ## Discogs API Usage
 
-Go the https://discogs.com, look for the album you want to add to the database and find the album ID in your browser's address bar.
+Go the https://discogs.com website, look for the album you want to add to the database and find the album ID in your browser's address bar.
 Add the ID to the Discogs ID field in the Add Album or Edit Album form and let the API do the rest.
 
 ## Quickstart / Local Usage
